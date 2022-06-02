@@ -127,7 +127,7 @@ public class CI_Data : ScriptableObject
 
     public void BeginAotuBuild()
     {
-        LoadWindowLayout();
+        //LoadWindowLayout();
 
         Log(LogType.nor, "-");
         Log(LogType.nor, "宏 " + PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup));
@@ -146,10 +146,11 @@ public class CI_Data : ScriptableObject
             CI_Log.Start(Instance.logPath);
 
             Instance.AnalysisStep(CI_Listener.Context);
-            Instance.BeginAotuBuild();
 
             CI_Listener.LogPath = null;
             CI_Listener.Context = null;
+
+            Instance.BeginAotuBuild();
         }
     }
 
@@ -231,7 +232,11 @@ public class CI_Data : ScriptableObject
 
         Log(LogType.main, "开始执行 {0}".EFormat(Peek));
 
-        ExecuteStep(Peek);
+
+        EditorApplication.delayCall = delegate ()
+        {
+            ExecuteStep(Peek);
+        };
     }
 
     //步骤完成
@@ -363,8 +368,8 @@ public class CI_Data : ScriptableObject
                 SetpDone(step);
                 return;
             case CI_Step.SvnCommit:
-                string cachePath = "{0}/../bin/{1}/cache/".EFormat(Application.dataPath, EditorUserBuildSettings.activeBuildTarget.ToString());
-                CI_SVN.Commit("cachePath", "自动打包提交");
+                string cachePath = "/../bin/{0}/cache/".EFormat(EditorUserBuildSettings.activeBuildTarget.ToString());
+                CI_SVN.Commit(cachePath, "自动打包提交");
                 SetpDone(step);
                 return;
             case CI_Step.TableTojson:

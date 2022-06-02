@@ -33,7 +33,7 @@ public class CI_SVN
     {
         path = Application.dataPath + path;
 
-        var pStr = CMD("status", path);
+        var pStr = CMD("status" + " \"{0}\"".EFormat(path));
         var output = pStr[0];
         var error = pStr[1];
 
@@ -44,14 +44,14 @@ public class CI_SVN
             if (opList[i].Length < 8) continue;
             if (opList[i].Substring(0, 8).Contains("?"))
             {
-                pStr = CMD("add \"{0}\" --no-ignore --force".EFormat(path), "");
+                pStr = CMD("add \"{0}\" --no-ignore --force".EFormat(opList[i].Substring(8)), "");
                 error += pStr[1];
                 sb.AppendLine("修改: " + opList[i]);
             }
             else
             if (opList[i].Substring(0, 8).Contains("!"))
             {
-                pStr = CMD("delete \"{0}\"".EFormat(path), "");
+                pStr = CMD("delete \"{0}\"".EFormat(opList[i].Substring(8)), "");
                 error += pStr[1];
                 sb.AppendLine("删除: " + opList[i]);
             }
@@ -70,7 +70,7 @@ public class CI_SVN
 
     public static int ReadLastChangeRevision(string path = "")
     {
-        var pStr = CMD("info", path);
+        var pStr = CMD("info " + ReadUrl(path), path);
         var output = pStr[0];
         var error = pStr[1];
 
@@ -94,7 +94,7 @@ public class CI_SVN
         startIndex = startIndex + "URL: ".Length;
         var endIndex = output.IndexOf("\r\n", startIndex);
         var url_str = output.Substring(startIndex, endIndex - startIndex);
-        Debug.Log("Svn服务器地址:" + url_str);
+        //Debug.Log("Svn服务器地址:" + url_str);
         return url_str;
     }
 
@@ -119,11 +119,11 @@ public class CI_SVN
 
         for (int i = 0; i < fileList.Count; i++)
         {
-            CMD("resolve --accept theirs-full", fileList[i]);
+            CMD("resolve --accept theirs-full" + " \"{0}\"".EFormat(fileList[i]), "");
         }
         for (int i = 0; i < fileList.Count; i++)
         {
-            CMD("revert", fileList[i]);
+            CMD("revert" + " \"{0}\"".EFormat(fileList[i]), "");
         }
     }
 
@@ -163,5 +163,10 @@ public class CI_SVN
     //{
     //    Commit("/TestObject/", "测试测试");
     //}    
+    //[MenuItem("Tools/测试SVN最新版本 &2")]
+    //public static void Test2()
+    //{
+    //    Debug.Log(ReadLastChangeRevision(Application.dataPath));
+    //}
     #endregion
 }

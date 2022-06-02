@@ -20,7 +20,6 @@ public class CI_Window : EditorWindow
     private void OnGUI()
     {
         this.Repaint();
-        CI_Data.Update();
 
         #region IP地址端口和Tag
         addressFold = EditorGUILayout.Foldout(addressFold, "Address", true);
@@ -75,6 +74,8 @@ public class CI_Window : EditorWindow
         {
             data.BeginAotuBuild();
         }
+
+        CI_Data.Update();        
     }
 
     public void ShowBool(CI_Step step, string txt)
@@ -83,7 +84,7 @@ public class CI_Window : EditorWindow
     }
 
 
-    [MenuItem("Tools/Misc/自动打包")]
+    [MenuItem("Tools/CI/自动打包 #C")]
     static void OpenWindow()
     {
         if (Window != null)
