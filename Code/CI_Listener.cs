@@ -34,10 +34,10 @@ public class CI_Listener
 
     public static void Stop()
     {
-        listener?.Stop();
-        listener = null;
-        linstenThread?.Abort();
+        if (linstenThread != null) linstenThread.Abort();
         linstenThread = null;
+        if (listener != null) listener.Stop();
+        listener = null;
         isWorking = false;
     }
 
@@ -46,7 +46,7 @@ public class CI_Listener
         return isWorking;
     }
 
-    private static async void RequestLoop(object rootPath)
+    private static void RequestLoop(object rootPath)
     {
         listener = new HttpListener();
         listener.Prefixes.Add(string.Format("http://{0}:{1}/", GetIP(),CI_Data.Instance.port));
@@ -54,7 +54,7 @@ public class CI_Listener
 
         while (true)
         {
-            var context = await listener.GetContextAsync();
+            var context = listener.GetContext();
 
             try
             {
